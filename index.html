@@ -21,7 +21,7 @@ header p{font-size:10px;color:#3a5a3a;font-family:'DM Mono',monospace}
 #ctrl{padding:14px 16px;border-bottom:1px solid #1a2a1a;flex-shrink:0;background:#0f1a0f}
 .date-display{font-family:'DM Mono',monospace;line-height:1;margin-bottom:8px}
 .date-month{font-size:1.4rem;font-weight:500;color:#8da88d}
-.date-year{font-size:2.8rem;font-weight:500;color:#8da88d;line-height:1}
+.date-year{font-size:2.8rem;font-weight:500;color:#8da88d;line-height:1}s
 .era-pill{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:2px 9px;border-radius:16px;display:inline-block;margin-bottom:10px}
 .era-boom{background:#1a341a;color:#8da88d}
 .era-decline{background:#341a1a;color:#c47c7c}
@@ -66,13 +66,42 @@ button.active{background:#8da88d;color:#111814;border-color:#8da88d}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:#0a120a}
 ::-webkit-scrollbar-thumb{background:#1a2a1a;border-radius:2px}
+  ::-webkit-scrollbar-thumb{background:#1a2a1a;border-radius:2px}
+@media (max-width: 768px) {
+  body { overflow-y: auto; overflow-x: hidden; height: auto; min-height: 100vh; }
+  header { flex-wrap: wrap; gap: 6px; padding: 10px 14px; }
+  header h1 { font-size: 13px; }
+  header > div:last-child { display: none; }
+  .main { display: flex; flex-direction: column; height: auto; overflow: visible; }
+  #map-wrap { min-height: 60vw; width: 100%; }
+  #map-svg { width: 100%; height: auto; }
+  .sidebar { border-left: none; border-top: 1px solid #1a2a1a; width: 100%; overflow: visible; }
+  #ctrl { padding: 12px 14px; }
+  .date-year { font-size: 2.2rem; }
+  .date-month { font-size: 1.1rem; }
+  .btns { flex-wrap: wrap; }
+  .spd-row { flex-wrap: wrap; }
+  .legend-row { flex-wrap: wrap; }
+  #port-list-wrap { max-height: 260px; overflow-y: auto; padding: 10px 14px; }
+  .p-row { padding: 5px 4px; }
+  .p-name { font-size: 12px; }
+  .p-val { font-size: 11px; }
+  #chart-wrap { padding: 10px 14px 20px; }
+  #port-chart { width: 100%; height: 140px; }
+  .tip { font-size: 12px; max-width: 200px; }
+  input[type=range] { height: 6px; }
+  input[type=range]::-webkit-slider-thumb { width: 18px; height: 18px; }
+  button { padding: 6px 14px; font-size: 12px; }
+  .spd-btn { padding: 4px 10px; font-size: 10px; }
+}
+</style>
 </style>
 </head>
 <body>
 <header>
   <div>
     <h1>U.S. Border Crossings — 1996 to 2026</h1>
-    <p>Kailas Srinivasan · IST 421 · Syracuse University · Source: U.S. Bureau of Transportation Statistics</p>
+    <p>Kailas Srinivasan · IST 421 · Source: U.S. Bureau of Transportation Statistics</p>
   </div>
   <div style="font-family:'DM Mono',monospace;font-size:9px;color:#2a3a2a;text-align:right;line-height:1.6">
     Circle size + color = crossing volume<br>Darker = more crossings · Click any port
