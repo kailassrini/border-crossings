@@ -196,7 +196,11 @@ function getEra(y,m){
 
 const proj = d3.geoAlbersUsa().scale(1300).translate([470, 290]);
 const svg = d3.select("#map-svg");
-const tip = document.getElementById("tip");
+const mapG = svg.append("g").attr("id","map-g");
+const zoom = d3.zoom().scaleExtent([1,8]).on("zoom",(e)=>{mapG.attr("transform",e.transform)});
+svg.call(zoom);
+svg.on("dblclick.zoom",null);
+svg.on("dblclick",()=>{svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity)});const tip = document.getElementById("tip");
 let curIdx=0, playing=false, timer=null, selPort="San Ysidro", speedMs=120;
 
 const sizeScale = d3.scaleSqrt().domain([0, maxCount]).range([2, 28]);
@@ -209,19 +213,19 @@ function initMap(){
   d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json").then(us => {
     const path = d3.geoPath().projection(proj);
     const states = topojson.feature(us, us.objects.states);
-    svg.append("g").selectAll("path")
-      .data(states.features).join("path")
-      .attr("class","state-path").attr("d",path);
-    svg.append("g").selectAll("path")
-      .data(states.features).join("path")
-      .attr("class","state-path-border").attr("d",path);
+    mapG.append("g").selectAll("path")
+    .data(states.features).join("path")
+    .attr("class","state-path").attr("d",path);
+    mapG.append("g").selectAll("path")
+    .data(states.features).join("path")
+    .attr("class","state-path-border").attr("d",path);
 
     PORTS.forEach(port => {
       const fd = DATA.find(d => d["Port.Name"]===port);
       if(!fd) return;
       const p = proj([fd.Longitude, fd.Latitude]);
       if(!p) return;
-      svg.append("circle")
+      mapG.append("circle")
         .attr("class","port-dot")
         .attr("id", safeid(port))
         .attr("cx",p[0]).attr("cy",p[1])
