@@ -319,12 +319,15 @@ function drawChart(port){
   const m = {top:6, right:6, bottom:18, left:32};
   const w = cw-m.left-m.right, h = ch-m.top-m.bottom;
 
-  // Use monthly data to match sidebar values
-  const pd = DATA.filter(d=>d["Port.Name"]===port)
-    .map(d=>({t: d.Year + (d.Month-1)/12, count: d.CrossingCount}))
-    .sort((a,b)=>a.t-b.t);
+  // Use yearly aggregated data for cleaner chart line
+  const portYearly = {};
+  DATA.filter(d=>d["Port.Name"]===port).forEach(d=>{
+    if(!portYearly[d.Year]) portYearly[d.Year]=0;
+    portYearly[d.Year]+=d.CrossingCount;
+  });
+  const pd = Object.entries(portYearly).map(([y,c])=>({year:+y,count:c})).sort((a,b)=>a.year-b.year);
 
-  const x = d3.scaleLinear().domain([1996,2026.1]).range([0,w]);
+  const x = d3.scaleLinear().domain([1996,2026]).range([0,w]);
   const y = d3.scaleLinear().domain([0, d3.max(pd,d=>d.count)*1.1]).range([h,0]);
 
   const sv = d3.select(cs);
@@ -332,10 +335,23 @@ function drawChart(port){
   const g = sv.append("g").attr("transform",`translate(${m.left},${m.top})`);
 
   g.append("path").datum(pd).attr("class","c-area")
-    .attr("d", d3.area().x(d=>x(d.t)).y0(h).y1(d=>y(d.count)).curve(d3.curveMonotoneX));
+    .attr("d", d3.area().x(d=>x(d.year)).y0(h).y1(d=>y(d.count)).curve(d3.curveMonotoneX));
   g.append("path").datum(pd).attr("class","c-line")
-    .attr("d", d3.line().x(d=>x(d.t)).y(d=>y(d.count)).curve(d3.curveMonotoneX));
+    .attr("d", d3.line().x(d=>x(d.year)).y(d=>y(d.count)).curve(d3.curveMonotoneX));
 
+  // Current time marker
+  const tp = TIMEPOINTS[curIdx];
+  const cx = x(tp.year + (tp.month-1)/12);
+  g.append("line").attr("class","c-vline").attr("x1",cx).attr("x2",cx).attr("y1",0).attr("y2",h);
+
+  const cp = pd.find(d=>d.year===tp.year);
+  if(cp) g.append("circle").attr("class","c-dot").attr("cx",x(cp.year)).attr("cy",y(cp.count)).attr("r",3.5);
+
+  g.append("g").attr("class","ax").attr("transform",`translate(0,${h})`)
+    .call(d3.axisBottom(x).tickValues([1996,2001,2008,2020,2026]).tickFormat(d3.format("d")).tickSize(3));
+  g.append("g").attr("class","ax")
+    .call(d3.axisLeft(y).ticks(3).tickFormat(d=>(d/1e6/12).toFixed(1)+"M").tickSize(3));
+}
   // Current time marker
   const tp = TIMEPOINTS[curIdx];
   const curT = tp.year + (tp.month-1)/12;
