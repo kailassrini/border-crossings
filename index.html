@@ -21,7 +21,7 @@ header p{font-size:10px;color:#3a5a3a;font-family:'DM Mono',monospace}
 #ctrl{padding:14px 16px;border-bottom:1px solid #1a2a1a;flex-shrink:0;background:#0f1a0f}
 .date-display{font-family:'DM Mono',monospace;line-height:1;margin-bottom:8px}
 .date-month{font-size:1.4rem;font-weight:500;color:#8da88d}
-.date-year{font-size:2.8rem;font-weight:500;color:#8da88d;line-height:1}s
+.date-year{font-size:2.8rem;font-weight:500;color:#8da88d;line-height:1}
 .era-pill{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:2px 9px;border-radius:16px;display:inline-block;margin-bottom:10px}
 .era-boom{background:#1a341a;color:#8da88d}
 .era-decline{background:#341a1a;color:#c47c7c}
@@ -66,7 +66,6 @@ button.active{background:#8da88d;color:#111814;border-color:#8da88d}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:#0a120a}
 ::-webkit-scrollbar-thumb{background:#1a2a1a;border-radius:2px}
-  ::-webkit-scrollbar-thumb{background:#1a2a1a;border-radius:2px}
 @media (max-width: 768px) {
   body { overflow-y: auto; overflow-x: hidden; height: auto; min-height: 100vh; }
   header { flex-wrap: wrap; gap: 6px; padding: 10px 14px; }
@@ -311,14 +310,6 @@ function drawChart(port){
   const m = {top:6, right:6, bottom:18, left:32};
   const w = cw-m.left-m.right, h = ch-m.top-m.bottom;
 
-function drawChart(port){
-  document.getElementById("chart-title").textContent = port;
-  const cs = document.getElementById("port-chart");
-  const cw = cs.getBoundingClientRect().width || 260;
-  const ch = 130;
-  const m = {top:6, right:6, bottom:18, left:32};
-  const w = cw-m.left-m.right, h = ch-m.top-m.bottom;
-
   // Use yearly aggregated data for cleaner chart line
   const portYearly = {};
   DATA.filter(d=>d["Port.Name"]===port).forEach(d=>{
@@ -352,20 +343,7 @@ function drawChart(port){
   g.append("g").attr("class","ax")
     .call(d3.axisLeft(y).ticks(3).tickFormat(d=>(d/1e6/12).toFixed(1)+"M").tickSize(3));
 }
-  // Current time marker
-  const tp = TIMEPOINTS[curIdx];
-  const curT = tp.year + (tp.month-1)/12;
-  const cx = x(curT);
-  g.append("line").attr("class","c-vline").attr("x1",cx).attr("x2",cx).attr("y1",0).attr("y2",h);
 
-  const cp = pd.find(d=>Math.abs(d.t - curT)<0.01);
-  if(cp) g.append("circle").attr("class","c-dot").attr("cx",x(cp.t)).attr("cy",y(cp.count)).attr("r",3.5);
-
-  g.append("g").attr("class","ax").attr("transform",`translate(0,${h})`)
-    .call(d3.axisBottom(x).tickValues([1996,2001,2008,2020,2026]).tickFormat(d3.format("d")).tickSize(3));
-  g.append("g").attr("class","ax")
-    .call(d3.axisLeft(y).ticks(3).tickFormat(d=>(d/1e6).toFixed(1)+"M").tickSize(3));
-}
 // Speed buttons
 document.querySelectorAll(".spd-btn").forEach(btn => {
   btn.addEventListener("click", function(){
